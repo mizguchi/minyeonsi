@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<section id="ending-dialogue-page" class="game-page">
+  <img id="sprite" class="sprite hidden" alt="">
+  <section id="dialogue" class="dialogue-box hidden" tabindex="0">
+    <strong id="speaker"></strong>
+    <p id="line"></p>
+    <i>▼</i>
+  </section>
+</section>
+
+<section id="flag-page" class="ending-page hidden">
+  <h1>TRUE ENDING</h1>
+  <code>{{ flag }}</code>
+  <form method="post" action="{{ url_for('restart') }}">
+    <button type="submit">처음부터 다시 하기</button>
+  </form>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  runDialogue([
+    { speaker: "민정", text: "....", mood: "blush", sprite: "girl/confession" },
+    { speaker: "민정", text: "나도 사실 널 좋아했어..♡", mood: "blush", sprite: "girl/confessionsuccess" }
+  ], null, () => {
+    document.querySelector("#ending-dialogue-page").classList.add("hidden");
+    document.querySelector("#flag-page").classList.remove("hidden");
+  });
+</script>
+{% endblock %}

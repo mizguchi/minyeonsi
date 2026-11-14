@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="game-page">
+  <header class="game-status">
+    <span>📍 호감도: <b>{{ likability }}</b>%</span>
+    <a href="{{ url_for('confession') }}">💌 고백하기</a>
+  </header>
+  <section class="choice-menu">
+    <p>어디로 갈까?</p>
+    <form method="post" action="{{ url_for('meal_result', restaurant='kane') }}"><button type="submit">카네카츠</button></form>
+    <form method="post" action="{{ url_for('meal_result', restaurant='sarang') }}"><button type="submit">사랑집</button></form>
+    <form method="post" action="{{ url_for('meal_result', restaurant='tsutsu') }}"><button type="submit">츠츠</button></form>
+  </section>
+</section>
+{% endblock %}

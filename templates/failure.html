@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="game-page">
+  <header class="game-status"><span>📍 호감도: <b>{{ likability }}</b>%</span></header>
+  <img id="sprite" class="sprite hidden" alt="">
+  <section id="dialogue" class="dialogue-box hidden" tabindex="0">
+    <strong id="speaker"></strong>
+    <p id="line"></p>
+    <i>▼</i>
+  </section>
+</section>
+
+<section id="fail-screen" class="fail-screen hidden">
+  <div class="fail-card">
+    <img class="fail-img" src="{{ url_for('static', filename='img/background/fail.png') }}" alt="실패">
+    <form method="post" action="{{ url_for('restart') }}" class="fail-form">
+      <button type="submit" class="fail-restart">다시 하기</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  runDialogue([
+    { speaker: "민정", text: "....", mood: "bored", sprite: "girl/confession" },
+    { speaker: "민정", text: "사귀자고? 너 누군데?", mood: "bored", sprite: "girl/confessionfail" }
+  ], null, function () {
+    document.querySelector("#fail-screen").classList.remove("hidden");
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="title-page">
+  <form method="post" class="name-form">
+    <label for="name">당신의 이름</label>
+    <input id="name" name="name" maxlength="12" placeholder="이름을 입력하세요" autocomplete="off" required autofocus>
+    {% if error %}<p class="form-error">{{ error }}</p>{% endif %}
+    <button type="submit">이야기 시작하기</button>
+  </form>
+</section>
+{% endblock %}

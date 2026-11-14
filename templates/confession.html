@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="game-page">
+  <header class="game-status"><span>📍 호감도: <b>{{ likability }}</b>%</span></header>
+  <img id="sprite" class="sprite hidden" alt="">
+
+  <section id="dialogue" class="dialogue-box hidden" tabindex="0">
+    <strong id="speaker"></strong>
+    <p id="line"></p>
+    <i>▼</i>
+  </section>
+
+  <form id="confession-form" method="post" class="hidden">
+    <input type="hidden" name="nonce" value="{{ confession_nonce }}">
+  </form>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  const confessionText = "안녕민정아너를처음본순간부터좋아했어해킹캠프전에고백하고싶었는데바보같이그땐용기가없더라지금은이수많은사람들앞에서오로지너만사랑한다고말하고싶어큰마음먹고용기내어봐매일매일팔달관111호에서너볼때마다두근두근댔고후이즈활동에서도너만보이고너생각만나고지난1년동안계속그랬어니가남자친구랑헤어지고맘아파울때내마음도너무아팠지만내심좋은맘두있었어이런내맘을어떻게말할지고민하다가정말인생에서제일크게용기내어세상에서제일멋지게많은사람들앞에서너한테고백해주고싶었어사랑하는민정님내여자가되어줄래?아니나만의태양이되어줄래?난너의달님이될게";
+  runDialogue([
+    { speaker: {{ player_name|tojson }}, text: "아.. 그니까..", sprite: "boy/confession", motion: "enter" },
+    { speaker: {{ player_name|tojson }}, text: confessionText, sprite: "boy/confession" }
+  ], null, () => document.querySelector("#confession-form").requestSubmit());
+</script>
+{% endblock %}

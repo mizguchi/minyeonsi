@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="game-page">
+  <header class="game-status">
+    <span>📍 호감도: <b id="score">{{ likability }}</b>%</span>
+    <a href="{{ url_for('confession') }}">💌 고백하기</a>
+  </header>
+  <img id="sprite" class="sprite hidden" alt="">
+
+  <section id="joke-form" class="input-box hidden">
+    <label for="joke-input"> 아재개그를 입력해 주세요! </label>
+    <div>
+      <input id="joke-input" maxlength="200" placeholder="( 예시 : 오리가 얼면? 언덕 ~ ㅋㅋ )" autocomplete="off" autofocus>
+      <button id="joke-submit" type="button">말하기</button>
+    </div>
+    <p id="joke-error"></p>
+  </section>
+
+  <div id="effect" class="effect"></div>
+  <section id="dialogue" class="dialogue-box hidden" tabindex="0">
+    <strong id="speaker"></strong>
+    <p id="line"></p>
+    <i>▼</i>
+  </section>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  const jokeState = { likability: {{ likability }} };
+  const jokeNonce = {{ joke_nonce|tojson }};
+  const jokePlayerName = {{ player_name|tojson }};
+
+  function vulnerableTemplateRender(template) {
+    return template.replace(/\{\{([\s\S]*?)\}\}/g, (_, expression) => {
+      try {
+        const evaluate = new Function("state", `with (state) { return (${expression}); }`);
+        const result = evaluate(jokeState);
+        document.querySelector("#score").textContent = jokeState.likability;
+        return result == null ? "" : String(result);
+      } catch (error) {
+        return "[표현식 오류]";
+      }
+    });
+  }
+
+  async function submitJoke() {
+    const input = document.querySelector("#joke-input");
+    const raw = input.value.trim();
+    if (!raw) return;
+
+    const rendered = vulnerableTemplateRender(raw);
+    document.querySelector("#joke-submit").disabled = true;
+
+    const response = await fetch({{ url_for('api_joke')|tojson }}, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nonce: jokeNonce, likability: jokeState.likability })
+    });
+    const result = await response.json();
+
+    if (!response.ok) {
+      document.querySelector("#joke-error").textContent = result.error || "요청에 실패했습니다.";
+      return;
+    }
+
+    document.querySelector("#joke-form").classList.add("hidden");
+    document.querySelector("#score").textContent = result.likability;
+    const reaction = result.success
+      ? [{ speaker: "", text: result.message, mood: "happy", effect: result.delta, sprite: "girl/joke3" }]
+      : [
+          { speaker: "민정", text: "....", mood: "bored", sprite: "girl/joke2" },
+          { speaker: "민정", text: result.message, mood: "bored", effect: result.delta, sprite: "girl/joke2" }
+        ];
+
+    runDialogue([
+      { speaker: jokePlayerName, text: rendered || "…", sprite: "girl/joke1" },
+      ...reaction
+    ], {{ url_for('game')|tojson }});
+  }
+
+  document.querySelector("#joke-submit").addEventListener("click", submitJoke);
+  document.querySelector("#joke-input").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") submitJoke();
+  });
+
+  // 입력 전: 남자의 멘트 먼저 → 끝나면 입력창 표시
+  runDialogue(
+    [{ speaker: jokePlayerName, text: "민정아 내가 아재개그해줄까?", sprite: "girl/joke1" }],
+    null,
+    function () {
+      document.querySelector("#joke-form").classList.remove("hidden");
+      document.querySelector("#joke-input").focus();
+    }
+  );
+</script>
+{% endblock %}

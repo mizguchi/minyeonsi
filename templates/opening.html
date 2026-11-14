@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="game-page">
+  <img id="sprite" class="sprite hidden" alt="">
+
+  <section id="profile-card" class="profile-card hidden">
+    <div class="profile-photo"><img src="{{ url_for('static', filename='img/girl/explain.png') }}" alt="민정"></div>
+    <div class="profile-copy">
+      <h2>민정</h2>
+      <dl>
+        <div><dt>소속</dt><dd>사이버보안학과 25학번</dd></div>
+        <div><dt>취미</dt><dd>광교호수공원 산책가기<br>하루 커피 5L 마시기<br>맛집 찾기</dd></div>
+        <div><dt>싫어하는 것</dt><dd>공부하기</dd></div>
+      </dl>
+      <button id="profile-next" type="button">계속</button>
+    </div>
+  </section>
+
+  <section id="dialogue" class="dialogue-box hidden" tabindex="0">
+    <strong id="speaker"></strong>
+    <p id="line"></p>
+    <i>▼</i>
+  </section>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  const playerName = {{ player_name|tojson }};
+  const steps = [
+    { speaker: playerName, text: "오늘은 굉장히 중요한 날입니다.", sprite: "boy/opening1", motion: "enter" },
+    { speaker: playerName, text: "한 여자에게 고백을 하는 날이거든요.", sprite: "boy/opening2" },
+    { speaker: playerName, text: "하지만 그녀가 나의 고백을 받아주기 위해선 10000%의 호감도를 얻어야 합니다.", sprite: "boy/opening3" },
+    { speaker: playerName, text: "과연 그녀가 제 마음을 받아줄까요?", sprite: "boy/opening4" },
+    { speaker: playerName, text: "저기 먼 곳에서 그녀가 보입니다.", sprite: "girl/opening1", pos: "left", motion: "goddess" },
+    { profile: true },
+    { speaker: "", text: "그녀에게 데이트 신청을 하여 호감도를 채우세요!" }
+  ];
+  runDialogue(steps, {{ url_for('game')|tojson }});
+</script>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="game-page">
+  <header class="game-status">
+    <span>📍 호감도: <b>{{ likability }}</b>%</span>
+    <a href="{{ url_for('confession') }}">💌 고백하기</a>
+  </header>
+
+  <section class="choice-menu">
+    <p>무엇을 할까?</p>
+    {% for option in options %}
+      {% if option.id == 'joke' %}
+        <a href="{{ url_for('joke') }}">{{ option.text }}</a>
+      {% elif option.id == 'meal' %}
+        <a href="{{ url_for('meal') }}">{{ option.text }}</a>
+      {% else %}
+        <form method="post" action="{{ url_for('activity', activity_id=option.id) }}">
+          <button type="submit">{{ option.text }}</button>
+        </form>
+      {% endif %}
+    {% endfor %}
+  </section>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="game-page">
+  <header class="game-status">
+    <span>📍 호감도: <b id="score">{{ likability }}</b>%</span>
+    <a href="{{ url_for('confession') }}">💌 고백하기</a>
+  </header>
+  <img id="sprite" class="sprite hidden" alt="">
+  <div id="effect" class="effect"></div>
+  <section id="dialogue" class="dialogue-box hidden" tabindex="0">
+    <strong id="speaker"></strong>
+    <p id="line"></p>
+    <i>▼</i>
+  </section>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  runDialogue({{ steps|tojson }}, {{ url_for('game')|tojson }});
+</script>
+{% endblock %}
